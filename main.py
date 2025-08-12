@@ -1,12 +1,27 @@
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from solver_verifier.api.pipeline_router import router as pipeline_router
+import logging
+
+# Suppress PDF parsing warnings
+logging.getLogger("pdfminer").setLevel(logging.ERROR)
+logging.getLogger("markitdown").setLevel(logging.ERROR)
 
 app = FastAPI(
     title="RFP Business Requirements Extractor",
     description="A 6-stage Analyzer-Verifier pipeline for extracting business requirements from RFP documents",
     version="0.1.0"
+)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],  # React dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Include routers

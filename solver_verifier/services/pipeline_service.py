@@ -146,6 +146,12 @@ class PipelineService:
             progress.update_step("completion", ProgressStatus.IN_PROGRESS, 50, "결과를 정리하고 있습니다...")
             await websocket_manager.send_update(session_id, ProgressUpdate.create_step_update(session_id, progress.steps[5]))
 
+            # Save results to file
+            await self._save_results_to_file(requirement_set, session_id)
+            
+            progress.update_step("completion", ProgressStatus.IN_PROGRESS, 75, "결과를 파일로 저장했습니다...")
+            await websocket_manager.send_update(session_id, ProgressUpdate.create_step_update(session_id, progress.steps[5]))
+
             # Final progress update
             progress.status = ProgressStatus.COMPLETED
             progress.overall_progress = 100
@@ -516,3 +522,108 @@ class PipelineService:
                 requirement_set.updated_at = datetime.now()
         
         return requirement_set
+
+    
+    async def _save_results_to_file(self, requirement_set: RequirementSet, session_id: str):
+        """Save pipeline results to JSON file based on acceptance status."""
+        import json
+        from pathlib import Path
+        
+        # Determine output directory based on status
+        if requirement_set.status == "accepted":
+            output_dir = Path(self.settings.output_directory)
+        else:
+            # For rejected or error status, use rejected_output directory
+            output_dir = Path("./rejected_output")
+        
+        # Create directory if it doesn't exist
+        output_dir.mkdir(exist_ok=True)
+        
+        # Generate filename with timestamp and status
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{requirement_set.name}_{timestamp}_{requirement_set.status}_{session_id[:8]}.json"
+        filepath = output_dir / filename
+        
+        # Prepare data for JSON serialization
+        result_data = {
+            "metadata": {
+                "session_id": session_id,
+                "set_id": requirement_set.set_id,
+                "name": requirement_set.name,
+                "description": requirement_set.description,
+                "status": requirement_set.status,
+                "pipeline_stage": requirement_set.pipeline_stage,
+                "source_documents": requirement_set.source_documents,
+                "created_at": requirement_set.created_at.isoformat() if requirement_set.created_at else None,
+                "updated_at": requirement_set.updated_at.isoformat() if requirement_set.updated_at else None,
+                "total_requirements": len(requirement_set.business_requirements),
+                "total_hypotheses": len(requirement_set.hypotheses),
+                "total_verification_issues": len(requirement_set.verification_issues)
+            },
+            "business_requirements": [
+                {
+                    "requirement_id": req.br_id,
+                    "title": req.title,
+                    "description": req.description,
+                    "category": req.requirement_type,
+                    "priority": req.priority,
+                    "stakeholders": req.stakeholders,
+                    "acceptance_criteria": req.acceptance_criteria,
+                    "citations": [
+                        {
+                            "text": citation.text,
+                            "source_document": citation.location.document,
+                            "page_number": citation.location.page_number,
+                            "section": citation.location.section,
+                            "line_number": citation.location.line_number,
+                            "paragraph": citation.location.paragraph,
+                            "context": citation.context
+                        } for citation in req.citations
+                    ],
+                    "tags": req.tags,
+                    "created_at": req.created_at.isoformat() if req.created_at else None
+                } for req in requirement_set.business_requirements
+            ],
+            "hypotheses": [
+                {
+                    "hypothesis_id": hyp.hypothesis_id,
+                    "description": hyp.description,
+                    "confidence_score": hyp.confidence_level,
+                    "supporting_evidence": hyp.evidence_needed,
+                    "created_at": hyp.created_at.isoformat() if hyp.created_at else None
+                } for hyp in requirement_set.hypotheses
+            ],
+            "verification_issues": [
+                {
+                    "issue_id": issue.issue_id,
+                    "error_type": issue.error_type,
+                    "severity": issue.severity,
+                    "description": issue.description,
+                    "affected_requirement_id": issue.br_id,
+                    "suggested_fix": issue.suggested_fix,
+                    "created_at": issue.created_at.isoformat() if issue.created_at else None
+                } for issue in requirement_set.verification_issues
+            ],
+            "coverage_metrics": {
+                "recall": requirement_set.coverage_metrics.recall if requirement_set.coverage_metrics else None,
+                "precision": requirement_set.coverage_metrics.precision if requirement_set.coverage_metrics else None,
+                "misinterpretation_rate": requirement_set.coverage_metrics.misinterpretation_rate if requirement_set.coverage_metrics else None,
+                "traceability_score": requirement_set.coverage_metrics.traceability_score if requirement_set.coverage_metrics else None,
+                "completion_rate": requirement_set.coverage_metrics.completion_rate if requirement_set.coverage_metrics else None,
+                "total_requirements": requirement_set.coverage_metrics.total_requirements if requirement_set.coverage_metrics else None
+            }
+        }
+        
+        # Write to JSON file
+        try:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                json.dump(result_data, f, indent=2, ensure_ascii=False)
+            
+            print(f"📄 Results saved to: {filepath}")
+            print(f"   Status: {requirement_set.status}")
+            print(f"   Requirements: {len(requirement_set.business_requirements)}")
+            print(f"   Issues: {len(requirement_set.verification_issues)}")
+            
+        except Exception as e:
+            print(f"❌ Error saving results: {str(e)}")
+            raise e

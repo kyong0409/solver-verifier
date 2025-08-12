@@ -83,9 +83,10 @@ class PipelineProgress(BaseModel):
             if step.status == ProgressStatus.IN_PROGRESS:
                 self.current_step = i + 1
                 break
-        elif all(step.status == ProgressStatus.COMPLETED for step in self.steps):
-            self.current_step = len(self.steps)
-            self.status = ProgressStatus.COMPLETED
+        else:
+            if all(step.status == ProgressStatus.COMPLETED for step in self.steps):
+                self.current_step = len(self.steps)
+                self.status = ProgressStatus.COMPLETED
 
 
 class ProgressUpdate(BaseModel):

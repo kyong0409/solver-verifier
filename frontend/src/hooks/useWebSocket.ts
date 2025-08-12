@@ -40,7 +40,9 @@ const useWebSocket = (): UseWebSocketReturn => {
     }
 
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const wsUrl = `${wsProtocol}//${window.location.host}/pipeline/ws/${sessionId}`;
+    // Use backend URL (port 8000) instead of frontend URL (port 3000)
+    const backendHost = window.location.hostname + ':8000';
+    const wsUrl = `${wsProtocol}//${backendHost}/pipeline/ws/${sessionId}`;
     
     try {
       wsRef.current = new WebSocket(wsUrl);
