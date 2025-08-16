@@ -32,6 +32,10 @@ class DocumentParserService:
         """
         documents = {}
         
+        print(f"📄 Starting document parsing for {len(file_paths)} files:")
+        for file_path in file_paths:
+            print(f"   - {Path(file_path).name}")
+        
         for file_path in file_paths:
             try:
                 filename = Path(file_path).name
@@ -39,12 +43,22 @@ class DocumentParserService:
                 if not self.is_supported_file(filename):
                     raise ValueError(f"Unsupported file format: {filename}")
                 
+                print(f"🔄 Parsing {filename}...")
                 content = await self._parse_single_document(file_path)
                 documents[filename] = content
                 
+                # Log content preview
+                content_preview = content[:300] + "..." if len(content) > 300 else content
+                print(f"✅ {filename} parsed successfully")
+                print(f"   📝 Content length: {len(content)} characters")
+                print(f"   📖 Preview: {content_preview}")
+                print(f"   " + "="*50)
+                
             except Exception as e:
+                print(f"❌ Error parsing {filename}: {str(e)}")
                 raise ValueError(f"Error parsing {filename}: {str(e)}")
         
+        print(f"✅ Document parsing completed. Total documents: {len(documents)}")
         return documents
     
     async def _parse_single_document(self, file_path: str) -> str:

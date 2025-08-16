@@ -256,3 +256,6 @@ temp_files/
 # Generated files
 *.pdf.txt
 *.docx.txt
+
+rejected_prompts/
+output/

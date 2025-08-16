@@ -568,7 +568,13 @@ class PipelineService:
                     "category": req.requirement_type,
                     "priority": req.priority,
                     "stakeholders": req.stakeholders,
-                    "acceptance_criteria": req.acceptance_criteria,
+                    "acceptance_criteria": [
+                        {
+                            "criterion_id": ac.criterion_id,
+                            "description": ac.description,
+                            "testable": ac.testable
+                        } for ac in req.acceptance_criteria
+                    ],
                     "citations": [
                         {
                             "text": citation.text,

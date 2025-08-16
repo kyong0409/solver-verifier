@@ -51,6 +51,20 @@ class AnalyzerService:
             # Build prompt for initial requirement extraction
             user_prompt = self._build_stage1_prompt(documents)
             
+            print(f"🧠 Stage 1: Calling LLM for initial requirement extraction...")
+            print(f"   📄 Documents to analyze: {len(documents)}")
+            print(f"   📝 System prompt length: {len(self.system_prompt)} characters")
+            print(f"   📝 User prompt length: {len(user_prompt)} characters")
+            
+            # Estimate total tokens (rough calculation: 1 token ≈ 4 characters)
+            total_chars = len(self.system_prompt) + len(user_prompt)
+            estimated_tokens = total_chars // 4
+            print(f"   🔢 Estimated input tokens: {estimated_tokens}")
+            
+            if estimated_tokens > 100000:  # Too large for most models
+                print(f"⚠️  Warning: Input too large ({estimated_tokens} tokens). Consider document chunking.")
+                # For now, proceed anyway - could implement chunking here later
+            
             # Call LLM service
             llm_response = await self.llm_service.call_llm_json(
                 system_prompt=self.system_prompt,
@@ -58,20 +72,39 @@ class AnalyzerService:
                 temperature=0.1
             )
             
+            print(f"✅ LLM response received:")
+            print(f"   📊 Response type: {type(llm_response)}")
+            print(f"   🔍 Response keys: {list(llm_response.keys()) if isinstance(llm_response, dict) else 'Not a dict'}")
+            if isinstance(llm_response, dict) and 'data' in llm_response:
+                print(f"   📋 Data keys: {list(llm_response['data'].keys())}")
+                if 'requirements' in llm_response['data']:
+                    print(f"   📌 Requirements found: {len(llm_response['data']['requirements'])}")
+            print(f"   " + "="*50)
+            
             # Parse LLM response and convert to our models
             requirements = []
             hypotheses = []
             
             # Extract requirements from LLM response
             if 'data' in llm_response and 'requirements' in llm_response['data']:
-                for req_data in llm_response['data']['requirements']:
+                print(f"🔄 Processing {len(llm_response['data']['requirements'])} requirements from LLM...")
+                for i, req_data in enumerate(llm_response['data']['requirements']):
                     try:
                         # Convert LLM response to BusinessRequirement model
                         requirement = self._convert_llm_to_requirement(req_data)
                         requirements.append(requirement)
+                        print(f"   ✅ Requirement {i+1}: {requirement.title[:50]}...")
                     except Exception as e:
-                        print(f"Error converting requirement: {e}")
+                        print(f"   ❌ Error converting requirement {i+1}: {e}")
+                        print(f"      📋 Req data keys: {list(req_data.keys()) if isinstance(req_data, dict) else 'Not a dict'}")
                         continue
+            else:
+                print(f"⚠️  No requirements found in LLM response structure")
+                if isinstance(llm_response, dict):
+                    print(f"   📋 Available keys: {list(llm_response.keys())}")
+                    if 'data' in llm_response:
+                        print(f"   📋 Data keys: {list(llm_response['data'].keys())}")
+                print(f"   📄 Raw LLM response preview: {str(llm_response)[:500]}...")
             
             # Extract hypotheses if present
             if 'hypotheses' in llm_response:
@@ -88,6 +121,10 @@ class AnalyzerService:
                     except Exception as e:
                         print(f"Error converting hypothesis: {e}")
                         continue
+            
+            print(f"📊 Stage 1 Analysis Results:")
+            print(f"   📌 Total requirements extracted: {len(requirements)}")
+            print(f"   🔬 Total hypotheses extracted: {len(hypotheses)}")
             
             return {
                 'requirements': requirements,
@@ -258,18 +295,56 @@ class AnalyzerService:
     def _build_stage1_prompt(self, documents: Dict[str, str]) -> str:
         """Build prompt for stage 1 initial draft generation."""
         prompt = f"""
-        Extract business requirements from the provided RFP documents.
-        
-        For each requirement:
-        1. Include direct citations with exact text and location information
-        2. Apply principles of clarity, completeness, consistency, and verifiability
-        3. If evidence is insufficient, classify as hypothesis rather than requirement
-        
-        Documents:
+다음 RFP 문서들에서 비즈니스 요구사항을 추출해주세요.
+
+각 요구사항에 대해:
+1. 원문에서 직접 인용한 텍스트와 위치 정보를 포함하세요
+2. 명확성, 완전성, 일관성, 검증가능성 원칙을 적용하세요
+3. 근거가 불충분한 경우 가설로 분류하세요
+
+응답은 반드시 다음 JSON 형식을 따라주세요:
+{{
+  "data": {{
+    "requirements": [
+      {{
+        "요구사항 ID": "BR_001",
+        "요구사항명": "요구사항 제목",
+        "고객 요구사항 상세 내용": "상세 설명",
+        "근거인용": [
+          {{
+            "quote": "원문 인용",
+            "doc_id": "문서명",
+            "loc": "위치 정보"
+          }}
+        ],
+        "이해관계자": ["이해관계자1", "이해관계자2"],
+        "수용기준(초안)": "수용 기준",
+        "우선순위": "높음/중간/낮음"
+      }}
+    ]
+  }},
+  "hypotheses": [
+    {{
+      "hypothesis_id": "HYP_001",
+      "description": "가설 설명",
+      "confidence_level": 0.7
+    }}
+  ]
+}}
+
+분석할 문서들:
         """
         
         for doc_name, content in documents.items():
-            prompt += f"\n--- {doc_name} ---\n{content[:2000]}...\n"  # Truncate for example
+            # Include full document content for complete analysis
+            prompt += f"\n--- {doc_name} ---\n{content}\n"
+            print(f"📋 Document '{doc_name}' added to prompt:")
+            print(f"   📏 Full content length: {len(content)} characters")
+            print(f"   📖 Content preview: {content[:200]}...")
+        
+        print(f"📝 Final prompt statistics:")
+        print(f"   📏 Total prompt length: {len(prompt)} characters")
+        print(f"   📄 Number of documents included: {len(documents)}")
         
         return prompt
     

@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "session_id": "05989540-d8e4-4b04-93f7-8fec9939fe04",
+    "set_id": "f5bc6f0c-a550-4252-90fe-35badc761f36",
+    "name": "123",
+    "description": null,
+    "status": "rejected",
+    "pipeline_stage": 6,
+    "source_documents": [
+      "tmpv_e91by7.pdf"
+    ],
+    "created_at": "2025-08-16T19:31:41.864934",
+    "updated_at": "2025-08-16T19:34:48.798524",
+    "total_requirements": 1,
+    "total_hypotheses": 0,
+    "total_verification_issues": 1
+  },
+  "business_requirements": [
+    {
+      "requirement_id": "BR-001",
+      "title": "모바일 주문 전환율 20% 향상",
+      "description": "모바일 채널에서의 구매 전환 개선이 최우선 목표입니다.",
+      "category": "functional",
+      "priority": "high",
+      "stakeholders": [
+        "영업본부",
+        "CX팀"
+      ],
+      "acceptance_criteria": [
+        {
+          "criterion_id": "AC_e85de9",
+          "description": "GA4 기준 3개월 평균 모바일 전환율 ≥ 20%",
+          "testable": true
+        }
+      ],
+      "citations": [
+        {
+          "text": "“모바일 채널에서의 구매 전환 개선이 최우선…”",
+          "source_document": "RFP_v3.pdf",
+          "page_number": null,
+          "section": "p12 §3",
+          "line_number": null,
+          "paragraph": null,
+          "context": null
+        }
+      ],
+      "tags": [
+        "모바일 전환",
+        "M-Conversion"
+      ],
+      "created_at": "2025-08-16T19:34:09.386204"
+    }
+  ],
+  "hypotheses": [],
+  "verification_issues": [
+    {
+      "issue_id": "b21d3024-5aeb-4478-a9bb-73609ffad7fd",
+      "error_type": "critical_error",
+      "severity": "high",
+      "description": "Referenced document 'RFP_v3.pdf' not found",
+      "affected_requirement_id": "BR-001",
+      "suggested_fix": null,
+      "created_at": "2025-08-16T19:34:39.348513"
+    }
+  ],
+  "coverage_metrics": {
+    "recall": 0.85,
+    "precision": 0.0,
+    "misinterpretation_rate": 1.0,
+    "traceability_score": 1.0,
+    "completion_rate": 0.0,
+    "total_requirements": 1
+  }
+}

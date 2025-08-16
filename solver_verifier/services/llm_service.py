@@ -138,8 +138,14 @@ class LLMService:
         )
         
         try:
-            return json.loads(response_text)
+            parsed_json = json.loads(response_text)
+            print(f"✅ JSON parsing successful:")
+            print(f"   📊 Response structure: {list(parsed_json.keys()) if isinstance(parsed_json, dict) else type(parsed_json)}")
+            return parsed_json
         except json.JSONDecodeError as e:
+            print(f"❌ JSON parsing failed:")
+            print(f"   📄 Raw response preview: {response_text[:500]}...")
+            print(f"   🔍 JSON error: {str(e)}")
             logger.error(f"Failed to parse JSON response: {response_text[:500]}...")
             raise ValueError(f"Invalid JSON response from LLM: {str(e)}") from e
     

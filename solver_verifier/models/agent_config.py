@@ -49,7 +49,7 @@ class SystemSettings(BaseSettings):
     )
     
     openai_max_tokens: int = Field(
-        default=4000,
+        default=8000,
         ge=1,
         le=16000,
         description="Maximum tokens for LLM response"

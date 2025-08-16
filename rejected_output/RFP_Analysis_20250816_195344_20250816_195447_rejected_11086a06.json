@@ -1,0 +1,157 @@
+{
+  "metadata": {
+    "session_id": "11086a06-129b-47af-9b9d-aac962f5c35a",
+    "set_id": "3a9452a3-6658-4459-94f4-7646952f1d11",
+    "name": "RFP_Analysis_20250816_195344",
+    "description": null,
+    "status": "rejected",
+    "pipeline_stage": 6,
+    "source_documents": [
+      "tmpdxxf8kr6.pdf"
+    ],
+    "created_at": "2025-08-16T19:53:44.562954",
+    "updated_at": "2025-08-16T19:54:47.414849",
+    "total_requirements": 3,
+    "total_hypotheses": 2,
+    "total_verification_issues": 2
+  },
+  "business_requirements": [
+    {
+      "requirement_id": "BR_001",
+      "title": "기술사업화 정보시스템 구축",
+      "description": "ICT 기술사업화 정보시스템(ICT-bay)을 구축하여 제품화 및 상용화를 촉진해야 한다.",
+      "category": "functional",
+      "priority": "high",
+      "stakeholders": [
+        "기술거래단",
+        "수요기업"
+      ],
+      "acceptance_criteria": [
+        {
+          "criterion_id": "AC_ad91cf",
+          "description": "시스템이 구축되어야 하며, 제품화 및 상용화가 이루어져야 한다.",
+          "testable": true
+        }
+      ],
+      "citations": [
+        {
+          "text": "공공ㆍ민간 R&D성과물 관리 및 확산을 위한 ICT 기술사업화 정보 시스템(ICT-bay) 을 구축하여 제품화ㆍ상용화를 촉진",
+          "source_document": "tmpdxxf8kr6.pdf",
+          "page_number": null,
+          "section": "p1 §3",
+          "line_number": null,
+          "paragraph": null,
+          "context": null
+        }
+      ],
+      "tags": [],
+      "created_at": "2025-08-16T19:54:02.007747"
+    },
+    {
+      "requirement_id": "BR_002",
+      "title": "기술검색 및 수요기술 요청 기능",
+      "description": "기술검색 및 수요기술 요청을 위한 온라인 정보시스템을 구축해야 한다.",
+      "category": "functional",
+      "priority": "medium",
+      "stakeholders": [
+        "기술공급자",
+        "수요기업"
+      ],
+      "acceptance_criteria": [
+        {
+          "criterion_id": "AC_32ba97",
+          "description": "온라인 시스템이 기능적으로 작동해야 하며, 기술 검색이 가능해야 한다.",
+          "testable": true
+        }
+      ],
+      "citations": [
+        {
+          "text": "기술검색 및 수요기술 요청을 위한 온라인 정보시스템(ICT-bay) 구축",
+          "source_document": "tmpdxxf8kr6.pdf",
+          "page_number": null,
+          "section": "p1 §3",
+          "line_number": null,
+          "paragraph": null,
+          "context": null
+        }
+      ],
+      "tags": [],
+      "created_at": "2025-08-16T19:54:02.007769"
+    },
+    {
+      "requirement_id": "BR_003",
+      "title": "기술거래 중개시스템 구축",
+      "description": "지식재산권(IPR)에 대한 기술거래중개시스템 및 성과정보시스템을 구축해야 한다.",
+      "category": "functional",
+      "priority": "medium",
+      "stakeholders": [
+        "기술거래단",
+        "기술공급자"
+      ],
+      "acceptance_criteria": [
+        {
+          "criterion_id": "AC_5e8a3c",
+          "description": "중개시스템이 구축되어야 하며, 성과정보가 제공되어야 한다.",
+          "testable": true
+        }
+      ],
+      "citations": [
+        {
+          "text": "지식재산권(IPR)에 대한 기술거래중개시스템 및 성과정보시스템(기술DB) 등을 구축",
+          "source_document": "tmpdxxf8kr6.pdf",
+          "page_number": null,
+          "section": "p1 §3",
+          "line_number": null,
+          "paragraph": null,
+          "context": null
+        }
+      ],
+      "tags": [],
+      "created_at": "2025-08-16T19:54:02.007782"
+    }
+  ],
+  "hypotheses": [
+    {
+      "hypothesis_id": "HYP_001",
+      "description": "기술사업화 정보시스템의 구축이 성공적으로 이루어질 경우, 기술이전 및 사업화가 활성화될 것이다.",
+      "confidence_score": 0.8,
+      "supporting_evidence": [],
+      "created_at": "2025-08-16T19:54:02.007792"
+    },
+    {
+      "hypothesis_id": "HYP_002",
+      "description": "기술검색 기능이 효과적으로 작동하지 않을 경우, 수요기업의 기술 요청이 감소할 것이다.",
+      "confidence_score": 0.7,
+      "supporting_evidence": [],
+      "created_at": "2025-08-16T19:54:02.007797"
+    }
+  ],
+  "verification_issues": [
+    {
+      "issue_id": "072922d0-36ac-4287-97e4-90a28b61ec88",
+      "error_type": "critical_error",
+      "severity": "high",
+      "description": "Citation text not found in source document",
+      "affected_requirement_id": "BR_001",
+      "suggested_fix": "Verify and correct the citation text",
+      "created_at": "2025-08-16T19:54:40.633604"
+    },
+    {
+      "issue_id": "98614416-1e1f-4849-998f-146bd0649f13",
+      "error_type": "critical_error",
+      "severity": "high",
+      "description": "Citation text not found in source document",
+      "affected_requirement_id": "BR_003",
+      "suggested_fix": "Verify and correct the citation text",
+      "created_at": "2025-08-16T19:54:43.261949"
+    }
+  ],
+  "coverage_metrics": {
+    "recall": 0.85,
+    "precision": 0.3333333333333333,
+    "misinterpretation_rate": 0.6666666666666666,
+    "traceability_score": 1.0,
+    "completion_rate": 0.3333333333333333,
+    "total_requirements": 3
+  }
+}
