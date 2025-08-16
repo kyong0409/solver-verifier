@@ -257,5 +257,5 @@ temp_files/
 *.pdf.txt
 *.docx.txt
 
-rejected_prompts/
+rejected_output/
 output/
